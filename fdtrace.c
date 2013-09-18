@@ -51,7 +51,6 @@ int main(int argc, char *argv[]) {
       exit(1);
     }
   } else {
-    fprintf(stderr, "Tracing file descriptors used by %s\n", argv[1]);
     while(1) {
       wait(&status);
       if(WIFEXITED(status))
