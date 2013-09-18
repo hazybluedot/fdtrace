@@ -13,10 +13,16 @@
 typedef unsigned long long int syscall_type;
 #define ORIG_REG ORIG_RAX
 #define REG_WIDTH 8
+#define REG_BX RBX
+#define REG_CX RCX
+#define REG_DX RDX
 #else
 typedef	long int syscall_type;
 #define ORIG_REG ORIG_EAX
 #define REG_WIDTH 4
+#define REG_BX EBX
+#define REG_CX ECX
+#define REG_DX EDX
 #endif
 
 int main(int argc, char *argv[]) {
@@ -24,7 +30,7 @@ int main(int argc, char *argv[]) {
   long syscall;
   int status;
   int insyscall = 0;
-  //char *execv[argc+2];
+  long long params[3];
 
   if ((pid = fork()) < 0) {
     perror("fork");
@@ -47,9 +53,19 @@ int main(int argc, char *argv[]) {
 	if (insyscall == 0) {
 	  // enterint system call
 	  insyscall = 1;
-	  list_fd(pid);
+	  params[0] = ptrace(PTRACE_PEEKUSER,
+			     pid, REG_WIDTH * REG_BX,
+			     NULL);
+	  params[1] = ptrace(PTRACE_PEEKUSER,
+			     pid, REG_WIDTH * REG_CX,
+			     NULL);
+	  params[2] = ptrace(PTRACE_PEEKUSER,
+			     pid, REG_WIDTH * REG_DX,
+			     NULL);	
+	  fprintf(stderr, "write(%lld, %lld, %lld)\n", params[0], params[1], params[2]); //TODO: arguments don't seem to be correct on 64bit arch
 	} else {
 	  insyscall = 0;
+	  list_fd(pid);
 	}
       }
       ptrace(PTRACE_SYSCALL,
