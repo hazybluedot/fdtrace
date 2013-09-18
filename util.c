@@ -1,13 +1,14 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <stdio.h>
+#include <stdint.h>
 
 int list_fd(pid_t pid) {
   DIR *dp;
   struct dirent *ep;
   char buffer[256];
 
-  sprintf(buffer, "/proc/%jd/fd", pid);
+  sprintf(buffer, "/proc/%jd/fd", (intmax_t)pid);
   dp = opendir(buffer);
   if (dp == NULL) {
     perror("opendir");
