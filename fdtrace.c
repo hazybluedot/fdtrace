@@ -42,6 +42,9 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
 
+  for(unsigned int i=3; i<9; i++)
+      close(i); //close file descriptors higher than '2'. Mainly a hack to eliminate confusing descriptors open due to bash completion.
+
   if ((pid = fork()) < 0) {
     perror("fork");
   } else if (pid == 0) {

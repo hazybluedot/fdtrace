@@ -1,3 +1,6 @@
+CC := cc
+CFLAGS := -Wall -std=c99
+
 all: fdtrace
 
 fdtrace: fdtrace.o util.o
@@ -7,3 +10,6 @@ clean:
 
 install:
 	cp fdtrace /usr/local/bin/
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $^
