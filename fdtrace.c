@@ -63,6 +63,7 @@ int main(int argc, char *argv[]) {
       case(SYS_close):
       case(SYS_dup):
       case(SYS_dup2):
+      case(SYS_fcntl):
 	fdchanged = 1;
 	break;
       case(SYS_write):
