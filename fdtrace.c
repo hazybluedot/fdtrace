@@ -69,6 +69,10 @@ int main(int argc, char *argv[]) {
 	if (insyscall == 0) {
 	  // enterint system call
 	  insyscall = 1;
+	  if (fdchanged) {
+	    list_fd(pid);
+	    fdchanged = 0;
+	  }
 	  params[0] = ptrace(PTRACE_PEEKUSER,
 			     pid, REG_WIDTH * REG_BX, NULL);
 	  params[1] = ptrace(PTRACE_PEEKUSER,
@@ -78,10 +82,6 @@ int main(int argc, char *argv[]) {
 	  fprintf(stderr, "write(%lld, %lld, %lld)\n", params[0], params[1], params[2]); //TODO: arguments don't seem to be correct on 64bit arch
 	} else {
 	  insyscall = 0;
-	  if (fdchanged) {
-	    list_fd(pid);
-	    fdchanged = 0;
-	  }
 	}
 	break;
       }
