@@ -25,12 +25,21 @@ typedef	long int syscall_type;
 #define REG_DX EDX
 #endif
 
+void usage() {
+  fputs("Usage: fdtrace COMMAND\n", stderr);
+}
+
 int main(int argc, char *argv[]) {
   pid_t pid;
   long syscall;
   int status;
   int insyscall = 0;
   long long params[3];
+
+  if (argc < 2) {
+    usage();
+    exit(1);
+  }
 
   if ((pid = fork()) < 0) {
     perror("fork");
