@@ -70,10 +70,11 @@ int main(int argc, char *argv[]) {
 	  params[2] = ptrace(PTRACE_PEEKUSER,
 			     pid, REG_WIDTH * REG_DX,
 			     NULL);	
-	  fprintf(stderr, "write(%lld, %lld, %lld)\n", params[0], params[1], params[2]); //TODO: arguments don't seem to be correct on 64bit arch
+	  //fprintf(stderr, "write(%lld, %lld, %lld)\n", params[0], params[1], params[2]); //TODO: arguments don't seem to be correct on 64bit arch
 	} else {
 	  insyscall = 0;
 	  list_fd(pid);
+	  break;
 	}
       }
       ptrace(PTRACE_SYSCALL,
