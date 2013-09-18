@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
 	break;
       }
       ptrace(PTRACE_SYSCALL,
-	   pid, NULL, NULL);
+	     pid, NULL, NULL);
     }
   }
 }
