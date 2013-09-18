@@ -34,6 +34,7 @@ int main(int argc, char *argv[]) {
   long syscall;
   int status;
   int insyscall = 0;
+  int fdchanged = 0;
   long long params[3];
 
   if (argc < 2) {
@@ -44,7 +45,7 @@ int main(int argc, char *argv[]) {
   if ((pid = fork()) < 0) {
     perror("fork");
   } else if (pid == 0) {
-	/*child */
+    /*child */
     ptrace(PTRACE_TRACEME, 0, NULL, NULL);
     if (-1 == execvp(argv[1], &argv[1]) ) {
       perror("execv");
@@ -56,29 +57,36 @@ int main(int argc, char *argv[]) {
       if(WIFEXITED(status))
 	break;
       syscall = ptrace(PTRACE_PEEKUSER,
-			pid, REG_WIDTH * ORIG_REG, NULL);
-      if(syscall == SYS_write) {
+		       pid, REG_WIDTH * ORIG_REG, NULL);
+      switch(syscall) { 
+      case(SYS_open):
+      case(SYS_close):
+      case(SYS_dup):
+      case(SYS_dup2):
+	fdchanged = 1;
+	break;
+      case(SYS_write):
 	if (insyscall == 0) {
 	  // enterint system call
 	  insyscall = 1;
 	  params[0] = ptrace(PTRACE_PEEKUSER,
-			     pid, REG_WIDTH * REG_BX,
-			     NULL);
+			     pid, REG_WIDTH * REG_BX, NULL);
 	  params[1] = ptrace(PTRACE_PEEKUSER,
-			     pid, REG_WIDTH * REG_CX,
-			     NULL);
+			     pid, REG_WIDTH * REG_CX, NULL);
 	  params[2] = ptrace(PTRACE_PEEKUSER,
-			     pid, REG_WIDTH * REG_DX,
-			     NULL);	
-	  //fprintf(stderr, "write(%lld, %lld, %lld)\n", params[0], params[1], params[2]); //TODO: arguments don't seem to be correct on 64bit arch
+			     pid, REG_WIDTH * REG_DX, NULL);	
+	  fprintf(stderr, "write(%lld, %lld, %lld)\n", params[0], params[1], params[2]); //TODO: arguments don't seem to be correct on 64bit arch
 	} else {
 	  insyscall = 0;
-	  list_fd(pid);
-	  break;
+	  if (fdchanged) {
+	    list_fd(pid);
+	    fdchanged = 0;
+	  }
 	}
+	break;
       }
       ptrace(PTRACE_SYSCALL,
-	     pid, NULL, NULL);
+	   pid, NULL, NULL);
     }
   }
 }
