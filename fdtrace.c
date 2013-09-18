@@ -1,8 +1,7 @@
 #include <sys/ptrace.h>
+#include <sys/reg.h>       /* For ORIG_RAX, ORIG_EAX */
 #include <sys/syscall.h>   /* For SYS_write etc */
 #include <sys/wait.h>
-
-#include <sys/reg.h>
 
 #include <unistd.h>
 #include <stdio.h>
