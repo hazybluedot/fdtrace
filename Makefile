@@ -1,5 +1,5 @@
-CC := gcc
-CFLAGS ?= -Wall -Wextra -std=c99 -pedantic
+CC := cc
+CFLAGS ?= -Wall -Wextra -std=c99
 
 all: fdtrace
 
@@ -10,3 +10,6 @@ clean:
 
 install:
 	cp fdtrace /usr/local/bin/
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $^

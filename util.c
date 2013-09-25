@@ -2,6 +2,7 @@
 #include <dirent.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <unistd.h>
 
 int list_fd(pid_t pid) {
   DIR *dp;
@@ -14,7 +15,7 @@ int list_fd(pid_t pid) {
     perror("opendir");
     return -1;
   } else {
-    while ( ep = readdir(dp) ) {
+      while ( (ep = readdir(dp)) ) {
       char buf[1024];
       char link[256];
       int len;
